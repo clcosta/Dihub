@@ -1,5 +1,5 @@
 import { env } from "@/infra/env";
-import { Crawller } from "@/data/contracts/crawller";
+import { Crawler } from "@/data/contracts/crawler";
 import { AppError } from "@/application/errors";
 import * as puppeteer from "puppeteer";
 
@@ -11,7 +11,7 @@ export const login = async (
   password: string
 ): Promise<void> => {
   try {
-    await page.goto(env.crawller.loginUrl);
+    await page.goto(env.crawler.loginUrl);
     await page.waitForSelector("#login_button_container");
     await page.type("#user-name", username);
     await page.type("#password", password);
@@ -40,7 +40,7 @@ export const checkIfLoggedIn = async (
 
 export const extractProductData = async (
   page: puppeteer.Page
-): Promise<Crawller.Product> => {
+): Promise<Crawler.Product> => {
   try {
     await page.waitForSelector('[class="inventory_details_desc_container"]');
     const title = await page.$eval(

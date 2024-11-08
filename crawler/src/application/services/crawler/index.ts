@@ -1,11 +1,11 @@
-import { ICrawller, Crawller } from "@/data/contracts/crawller";
+import { ICrawler as ICrawler, Crawler } from "@/data/contracts/crawler";
 import { BrowserContext } from "./browser-context";
 import * as utils from "./utils";
 import * as puppeteer from "puppeteer";
 import { ILog, Log } from "@/data/common/log";
 import { AppError } from "@/application/errors";
 
-export class CrawllerService implements ICrawller {
+export class CrawlerService implements ICrawler {
 
   private _currentInstances = 0;
 
@@ -14,11 +14,11 @@ export class CrawllerService implements ICrawller {
     private readonly browserContext: BrowserContext,
   ) {}
 
-  async execute({ accounts }: Crawller.Params): Promise<Crawller.Result> {
+  async execute({ accounts }: Crawler.Params): Promise<Crawler.Result> {
     try{
       if (this._currentInstances === 0) await this.setIntances(1);
-      const result: Crawller.Result = {}
-      this.log.save({ message: `Starting crawller with ${accounts.length} accounts` });
+      const result: Crawler.Result = {}
+      this.log.save({ message: `Starting crawler with ${accounts.length} accounts` });
 
       // certify the accounts are not duplicated
       if (new Set(accounts.map(acc => acc.username)).size !== accounts.length) {
@@ -41,7 +41,7 @@ export class CrawllerService implements ICrawller {
       });
       await Promise.all(promises);
 
-      this.log.save({ message: `Crawller finished` });
+      this.log.save({ message: `crawler finished` });
       return result;
     } catch (err) {
       if (err instanceof AppError) throw err;
@@ -49,7 +49,7 @@ export class CrawllerService implements ICrawller {
     }
 }
 
-  async extractData(account: Crawller.Account, context: puppeteer.BrowserContext): Promise<Crawller.Product> {
+  async extractData(account: Crawler.Account, context: puppeteer.BrowserContext): Promise<Crawler.Product> {
     const page = await context.newPage();
     if (!await utils.checkIfLoggedIn(page)) {
       await utils.login(page, account.username, account.password);

@@ -1,19 +1,19 @@
 import { ILog } from "@/data/common/log";
-import { Crawller, IBrowserContext } from "@/data/contracts/crawller";
+import { Crawler, IBrowserContext } from "@/data/contracts/crawler";
 import * as utils from "./utils";
 import * as puppeteer from "puppeteer";
 import { AppError } from "@/application/errors";
 import { env } from "@/infra/env";
 
 export class BrowserContext implements IBrowserContext {
-  private readonly intancesMap: Map<string, Crawller.Instance> = new Map();
+  private readonly intancesMap: Map<string, Crawler.Instance> = new Map();
 
   constructor(
     private readonly log: ILog,
     private readonly launchArgs: puppeteer.PuppeteerLaunchOptions
   ) {}
 
-  async getFreeInstance(): Promise<Crawller.Instance> {
+  async getFreeInstance(): Promise<Crawler.Instance> {
     if (this.intancesMap.size === 0) {
       this.log.save({
         message: "No browser instance available, creating new one",
@@ -28,8 +28,8 @@ export class BrowserContext implements IBrowserContext {
       if (!instance) {
         await utils.sleep(1000);
         if (
-          env.crawller.waitingBrowserTimeout !== 0 &&
-          tries > env.crawller.waitingBrowserTimeout
+          env.crawler.waitingBrowserTimeout !== 0 &&
+          tries > env.crawler.waitingBrowserTimeout
         ) {
           throw new AppError("Operação levou mais tempo que o esperado")
             .setSysMessage("Waiting to long for free browser instance")
@@ -45,7 +45,7 @@ export class BrowserContext implements IBrowserContext {
     }
   }
 
-  async newInstance(): Promise<Crawller.Instance> {
+  async newInstance(): Promise<Crawler.Instance> {
     this.log.save({ message: "Creating new browser context" });
     const browser = await puppeteer.launch(this.launchArgs);
     const context = await browser.createBrowserContext();
@@ -70,7 +70,7 @@ export class BrowserContext implements IBrowserContext {
     this.intancesMap.delete(instanceId);
   }
 
-  getInstancesMap(): ReadonlyMap<string, Crawller.Instance> {
+  getInstancesMap(): ReadonlyMap<string, Crawler.Instance> {
     return new Map(this.intancesMap);
   }
 

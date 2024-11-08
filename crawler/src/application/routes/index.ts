@@ -1,8 +1,10 @@
 import Express from 'express';
 import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
+import swaggerDocument from '@/infra/swagger.json';
 import { env } from '@/infra/env';
-import { LogAdapter } from '../adapters/log-adapter';
-import { crawllerRouter } from './crawller-routes';
+import { LogAdapter } from '@/application/adapters/log-adapter';
+import { crawlerRouter } from './crawler-routes';
 
 class RoutesClass {
   start = async () => {
@@ -11,7 +13,8 @@ class RoutesClass {
     app.use(Express.json());
     app.use(Express.urlencoded({ extended: true }));
 
-    app.use('/crawller', crawllerRouter);
+    app.use('/api', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
+    app.use('/crawler', crawlerRouter);
 
     app.listen(env.http.port, () => {
       LogAdapter.getInstance().save({ message: `Server running at http://localhost:${env.http.port}` });

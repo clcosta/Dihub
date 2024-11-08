@@ -1,6 +1,6 @@
 import {BrowserContext } from "puppeteer"
 
-export namespace Crawller {
+export namespace Crawler {
   export type Account = {
     username: string
     password: string
@@ -35,15 +35,15 @@ export namespace Crawller {
   }
 }
 
-export interface ICrawller {
-  execute: (accounts: Crawller.Params) => Promise<Crawller.Result>
+export interface ICrawler {
+  execute: (accounts: Crawler.Params) => Promise<Crawler.Result>
   setIntances: (quantity: number) => Promise<void>
   closeAllInstance(): Promise<void>
 }
 
 export interface IBrowserContext {
-  newInstance(): Promise<Crawller.Instance>
-  getFreeInstance(): Promise<Crawller.Instance>
+  newInstance(): Promise<Crawler.Instance>
+  getFreeInstance(): Promise<Crawler.Instance>
   setIntanceBusy(instanceId: string, busy: boolean): void
   closeInstance(instanceId: string): Promise<void>
 }

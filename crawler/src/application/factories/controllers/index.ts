@@ -1,1 +1,1 @@
-export * from './crawller-controller-factory'
+export * from './crawler-controller-factory'

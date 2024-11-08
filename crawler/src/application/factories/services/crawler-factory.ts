@@ -1,9 +1,9 @@
-import { CrawllerService } from "@/application/services/crawller";
+import { CrawlerService } from "@/application/services/crawler";
 import { LogAdapter } from "@/application/adapters/log-adapter";
 import { makeBrowserContext } from "./browser-context-factory";
 
-export const makeCrawllerService = (): CrawllerService => {
-  return new CrawllerService(
+export const makecrawlerService = (): CrawlerService => {
+  return new CrawlerService(
     LogAdapter.getInstance(),
     makeBrowserContext()
   );

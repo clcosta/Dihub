@@ -1,0 +1,193 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Teste Técnico Dihub [Crawler]",
+    "description": "API para raspar os dados do site: https://www.saucedemo.com. Utilizando um crawler interno para realizar a busca pelo produto mais caro sempre.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/crawler": {
+      "post": {
+        "tags": ["crawler"],
+        "summary": "Crawler",
+        "operationId": "crawler_crawler_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Crawler" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Response" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseError" }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseError" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseError" }
+              }
+            }
+          },
+          "408": {
+            "description": "Timeout Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseError" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseError" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Account": {
+        "properties": {
+          "username": { "type": "string", "title": "Username" },
+          "password": { "type": "string", "title": "Password" }
+        },
+        "type": "object",
+        "required": ["username", "password"],
+        "title": "Account"
+      },
+      "AccountResult": {
+        "properties": {
+          "success": { "type": "boolean", "title": "Success" },
+          "data": { "$ref": "#/components/schemas/Product" }
+        },
+        "type": "object",
+        "required": ["success", "data"],
+        "title": "AccountResult"
+      },
+      "Crawler": {
+        "properties": {
+          "instances": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Instances"
+          },
+          "accounts": {
+            "items": { "$ref": "#/components/schemas/Account" },
+            "type": "array",
+            "title": "Accounts"
+          }
+        },
+        "type": "object",
+        "required": ["instances", "accounts"],
+        "title": "Crawler"
+      },
+      "HTTPResponseError": {
+        "properties": {
+          "detail": {
+            "items": { "$ref": "#/components/schemas/ResponseError" },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "ResponseError"
+      },
+      "Product": {
+        "properties": {
+          "title": { "type": "string", "title": "Title" },
+          "price": { "type": "number", "title": "Price" },
+          "description": { "type": "string", "title": "Description" },
+          "rawPrice": { "type": "string", "title": "Rawprice" },
+          "img": { "type": "string", "title": "Img" },
+          "link": { "type": "string", "title": "Link" }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "price",
+          "description",
+          "rawPrice",
+          "img",
+          "link"
+        ],
+        "title": "Product"
+      },
+      "Response": {
+        "properties": {
+          "code": { "type": "integer", "title": "Code" },
+          "data": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/AccountResult" },
+              { "items": {}, "type": "array" },
+              { "type": "object" }
+            ],
+            "title": "Data"
+          },
+          "message": { "type": "string", "title": "Message" },
+          "sysMessage": { "type": "string", "title": "Sysmessage" }
+        },
+        "type": "object",
+        "required": ["code", "data", "message", "sysMessage"],
+        "title": "Response"
+      },
+      "ResponseError": {
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "items": {},
+                "type": "array"
+              }
+            ],
+            "title": "Data"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "sysMessage": {
+            "type": "string",
+            "title": "Sysmessage"
+          }
+        },
+        "type": "object",
+        "required": ["code", "data", "message", "sysMessage"],
+        "title": "ResponseError"
+      }
+    }
+  }
+}

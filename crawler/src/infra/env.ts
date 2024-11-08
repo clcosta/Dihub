@@ -5,8 +5,8 @@ export const env = {
   http: {
     port: +process.env.HTTP_PORT || 3000
   },
-  crawller: {
-    waitingBrowserTimeout: +process.env.CRAWLLER_BROWSER_TIMEOUT || 120, // 120 seconds
-    loginUrl: process.env.CRAWLLER_LOGIN_URL || "https://www.saucedemo.com/",
+  crawler: {
+    waitingBrowserTimeout: +process.env.crawler_BROWSER_TIMEOUT || 120, // 120 seconds
+    loginUrl: process.env.crawler_LOGIN_URL || "https://www.saucedemo.com/",
   }
 }
