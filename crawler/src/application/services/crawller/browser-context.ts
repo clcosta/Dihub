@@ -1,4 +1,4 @@
-import { ILog } from "@/data/contracts/log";
+import { ILog } from "@/data/common/log";
 import { Crawller, IBrowserContext } from "@/data/contracts/crawller";
 import * as utils from "./utils";
 import * as puppeteer from "puppeteer";
@@ -31,9 +31,9 @@ export class BrowserContext implements IBrowserContext {
           env.crawller.waitingBrowserTimeout !== 0 &&
           tries > env.crawller.waitingBrowserTimeout
         ) {
-          throw new AppError("Waiting to long for free browser instance").code(
-            408
-          );
+          throw new AppError("Operação levou mais tempo que o esperado")
+            .setSysMessage("Waiting to long for free browser instance")
+            .code(408);
         }
         tries++;
         continue;
@@ -55,7 +55,15 @@ export class BrowserContext implements IBrowserContext {
   }
 
   async closeInstance(instanceId: string): Promise<void> {
-    this.log.save({ message: `Closing all browsers contexts ${instanceId}` });
+    if (!this.intancesMap.has(instanceId)) return;
+    while (this.intancesMap.get(instanceId).busy) {
+      this.log.save({
+        message: `Instance ${instanceId} is busy, waiting to close`,
+      });
+      await utils.sleep(1000);
+      break;
+    }
+    this.log.save({ message: `Closing isntance ${instanceId}` });
     const instance = this.intancesMap.get(instanceId);
     if (!instance) return;
     await instance.context.close();

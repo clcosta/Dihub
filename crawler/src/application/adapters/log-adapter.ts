@@ -1,6 +1,6 @@
 import fs from "fs";
 import { format, createLogger, transports, Logger } from "winston";
-import { ILog, Log } from "@/data/contracts/log";
+import { ILog, Log } from "@/data/common/log";
 import { env } from "@/infra/env";
 
 export class LogAdapter implements ILog {
@@ -81,11 +81,13 @@ export class LogAdapter implements ILog {
         this.loggerError.log({
           level: Log.LogLevels.ERROR,
           message,
+          origin: params.origin,
         });
       } else {
         this.loggerInfo.log({
           level: Log.LogLevels.INFO,
           message,
+          origin: params.origin,
         });
       }
     } catch (e) {

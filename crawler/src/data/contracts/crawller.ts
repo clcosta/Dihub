@@ -15,6 +15,7 @@ export namespace Crawller {
   }
   export type Params = {
     accounts: Account[]
+    instances?: number
   }
   export type Result = {
     [username: string]: {
@@ -27,6 +28,10 @@ export namespace Crawller {
     id: string
     context: BrowserContext
     busy: boolean
+  }
+  export namespace SetInstance {
+    export type Params = number
+    export type Result = boolean
   }
 }
 

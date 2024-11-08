@@ -1,4 +1,4 @@
-import { BrowserContext } from "@/application/services/crawller";
+import { BrowserContext } from "@/application/services/crawller/browser-context"
 import { LogAdapter } from "@/application/adapters/log-adapter";
 import { PuppeteerLaunchOptions } from "puppeteer";
 

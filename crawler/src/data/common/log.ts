@@ -9,6 +9,7 @@ export namespace Log {
   }
   export type Params = {
     message: string
+    origin?: string
     type?: LogLevels
   }
 }
