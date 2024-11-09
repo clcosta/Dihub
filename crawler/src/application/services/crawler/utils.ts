@@ -68,3 +68,23 @@ export const extractProductData = async (
     throw new AppError(`Product data extraction unexpected failure: ${err}`);
   }
 };
+
+export const extractExternalProductData = async (page: puppeteer.Page, product: puppeteer.ElementHandle): Promise<Crawler.Product> => {
+  const title = await product.$eval('[data-test="inventory-item-name"]', (el) => el.textContent);
+  const desc = await product.$eval('[data-test="inventory-item-desc"]', (el) => el.textContent);
+  const rawPrice = await product.$eval('[data-test="inventory-item-price"]', (el) => el.textContent);
+  const price = +rawPrice.replace("$", "");
+  const img = await product.$eval('[class="inventory_item_img"]', (el) => el.getAttribute("src"));
+  const link = page.url() + await product.$eval('[data-test^="item-"][data-test$="-title-link"]', (el) => {
+    const id = el.getAttribute("data-test").replace("item-", "").replace("-title-link", "");
+    return `/inventory-item.html?id=${id}`;
+  })
+  return {
+    title,
+    description: desc,
+    rawPrice,
+    price,
+    img,
+    link
+  }
+}

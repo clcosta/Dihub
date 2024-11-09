@@ -1,5 +1,5 @@
 import { BaseController } from "./base-controller";
-import { CrawlerService } from "@/application/services/crawler";
+import { CrawlerService } from "@/application/services/crawler/crawler-service";
 import { IAppRequest } from "@/data/common/controller";
 import { HttpResponse } from "@/data/common/http";
 import { Crawler } from "@/data/contracts/crawler";

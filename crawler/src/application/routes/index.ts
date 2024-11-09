@@ -17,6 +17,7 @@ class RoutesClass {
     app.use('/crawler', crawlerRouter);
 
     app.listen(env.http.port, () => {
+      console.log(`API documentation at http://localhost:${env.http.port}/api`);
       LogAdapter.getInstance().save({ message: `Server running at http://localhost:${env.http.port}` });
     })
   }

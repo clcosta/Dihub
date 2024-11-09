@@ -22,11 +22,18 @@ export abstract class BaseController {
   };
 
   handle = async (httpRequest: IAppRequest): Promise<HttpResponse> => {
+    const start = performance.now();
     try {
       const validationErr = this.validate(httpRequest);
       if (validationErr !== undefined) {
-        let sysMessage = validationErr instanceof AppError ? validationErr.getSysMessage() : validationErr.message;
-        return HttpResponse.badRequest({ message: validationErr.message, sysMessage });
+        let sysMessage =
+          validationErr instanceof AppError
+            ? validationErr.getSysMessage()
+            : validationErr.message;
+        return HttpResponse.badRequest({
+          message: validationErr.message,
+          sysMessage,
+        });
       }
 
       const response = await this.execute(httpRequest);
@@ -49,12 +56,36 @@ export abstract class BaseController {
         type: Log.LogLevels.ERROR,
       });
       return HttpResponse.serverError({ message: err.message });
+    } finally {
+      this.saveBenchmark(httpRequest, start);
     }
   };
 
   validate(httpRequest: IAppRequest): Error | undefined {
     return;
   }
+
+  private saveBenchmark = async (
+    httpRequest: any,
+    start: number
+  ): Promise<void> => {
+    try {
+      const end = performance.now();
+      const time = (end - start).toFixed(0);
+      LogAdapter.getInstance().save({
+        message: `Benchmark: ${this.name} - ${time}ms`,
+        origin: httpRequest.ip ?? 'Unknown',
+        type: Log.LogLevels.INFO,
+      });
+    } catch (e) {
+      LogAdapter.getInstance().save({
+        message: `Benchmark: ${this.name} - Unexpected error`,
+        origin: httpRequest.ip ?? 'Unknown',
+        type: Log.LogLevels.ERROR,
+      });
+      console.error(e);
+    }
+  };
 
   private handleAppError = (err: AppError): HttpResponse => {
     const httpResponse = (
@@ -74,15 +105,18 @@ export abstract class BaseController {
     httpRequest,
     message,
     type,
+    origin,
   }: {
     httpRequest: IAppRequest;
     message?: string;
     type: Log.LogLevels;
+    origin?: string;
   }) => {
     try {
       if (type === Log.LogLevels.ERROR)
         return LogAdapter.getInstance().save({
           message,
+          origin,
           type: Log.LogLevels.ERROR,
         });
 
@@ -90,12 +124,12 @@ export abstract class BaseController {
         ? message
         : JSON.stringify({ ...httpRequest });
 
-      const userId = httpRequest.ip;
-      let logMessage = `[USER ${userId}]: ${messageContent}`
+      const userId = httpRequest.ip ?? 'unknown';
+      let logMessage = `[USER ${userId}]: ${messageContent}`;
 
       LogAdapter.getInstance().save({
         message: logMessage,
-        origin: this.name,
+        origin,
         type: Log.LogLevels.INFO,
       });
     } catch (e) {
