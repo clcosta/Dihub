@@ -70,6 +70,12 @@ export class BrowserContext implements IBrowserContext {
     this.intancesMap.delete(instanceId);
   }
 
+  async closeAllInstances(): Promise<void> {
+    this.log.save({ message: "Closing all browser instances" });
+    const instances = Array.from(this.intancesMap.values());
+    await Promise.all(instances.map((i) => this.closeInstance(i.id)));
+  }
+
   getInstancesMap(): ReadonlyMap<string, Crawler.Instance> {
     return new Map(this.intancesMap);
   }

@@ -117,34 +117,36 @@ export class CrawlerService implements ICrawler {
         const productTitleEl = await product.$(
           'a[href="#"][data-test$="-title-link"]'
         );
-        const productTitle = await productTitleEl.evaluate(el => el.textContent)
+        const productTitle = await productTitleEl.evaluate(
+          (el) => el.textContent
+        );
         this.log.save({
           message: `Extracting internal data from product "${productTitle}"`,
-        })
+        });
         await productTitleEl.click();
         await utils.sleep(500);
         // extract product data
-        const interalProductData = await utils.extractProductData(page)
+        const interalProductData = await utils.extractProductData(page);
         internalProductsData.push(interalProductData);
         // back to catalog
         await page.click('[id="back-to-products"]');
         await utils.sleep(500);
       }
       // get the highest price product
-      const maxPrice = Math.max(...internalProductsData.map(prod => prod.price ? prod.price : 0), 0)
-      const highestProduct = internalProductsData.find(prod => prod.price === maxPrice);
+      const maxPrice = Math.max(
+        ...internalProductsData.map((prod) => (prod.price ? prod.price : 0)),
+        0
+      );
+      const highestProduct = internalProductsData.find(
+        (prod) => prod.price === maxPrice
+      );
       return highestProduct;
     }
     return productData;
   }
 
-  async closeAllInstance(): Promise<void> {
-    this.log.save({ message: "Closing all browsers contexts" });
-    const intancesMap = this.browserContext.getInstancesMap();
-    const promises = Array.from(intancesMap.values()).map(async (instance) => {
-      await this.browserContext.closeInstance(instance.id);
-    });
-    await Promise.all(promises);
+  async closeAllInstances(): Promise<void> {
+    return this.browserContext.closeAllInstances();
   }
 
   async setIntances(quantity: number): Promise<void> {
@@ -163,5 +165,14 @@ export class CrawlerService implements ICrawler {
       await this.browserContext.newInstance();
       intancesMap = this.browserContext.getInstancesMap();
     }
+  }
+
+  async extractAccounts(): Promise<Crawler.Account[]> {
+    if (this._currentInstances === 0) await this.setIntances(1);
+    const { id, context } = await this.browserContext.getFreeInstance();
+    const page = await context.newPage();
+    const accounts = await utils.extractAccountsData(page)
+    this.browserContext.setIntanceBusy(id, false);
+    return [...accounts];
   }
 }

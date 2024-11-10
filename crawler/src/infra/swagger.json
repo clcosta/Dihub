@@ -7,9 +7,64 @@
   },
   "paths": {
     "/crawler": {
-      "post": {
+      "get": {
         "tags": ["crawler"],
         "summary": "Crawler",
+        "operationId": "crawler_crawler_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Response" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseError" }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseError" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseError" }
+              }
+            }
+          },
+          "408": {
+            "description": "Timeout Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseError" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseError" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["crawler"],
+        "summary": "Crawler with parameters",
         "operationId": "crawler_crawler_post",
         "requestBody": {
           "content": {

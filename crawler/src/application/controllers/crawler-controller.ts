@@ -13,9 +13,16 @@ export class CrawlerController extends BaseController {
   }
 
   execute = async ({ accounts, instances }: HttpRequest): Promise<HttpResponse> => {
-    await this.crawlerService.setIntances(instances);
-    const data = await this.crawlerService.execute({ accounts });
-    return HttpResponse.ok({ data });
+    try{
+      await this.crawlerService.setIntances(instances);
+      const data = await this.crawlerService.execute({ accounts });
+      return HttpResponse.ok({ data });
+    } catch (err) {
+      if (err instanceof AppError) throw err;
+      return HttpResponse.serverError(err);
+    } finally {
+      await this.crawlerService.closeAllInstances()
+    }
   };
 
   override validate({ accounts, instances }: HttpRequest): Error | undefined {

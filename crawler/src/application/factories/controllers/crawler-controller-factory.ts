@@ -1,6 +1,6 @@
 import { CrawlerController } from "@/application/controllers";
-import { makecrawlerService } from "@/application/factories/services/crawler-factory";
+import { makeCrawlerService } from "@/application/factories/services/crawler-service-factory"
 
-export const crawlerControllerFactory = (): CrawlerController => new CrawlerController(
-  makecrawlerService()
+export const makeCrawlerController = (): CrawlerController => new CrawlerController(
+  makeCrawlerService()
 );

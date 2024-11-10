@@ -88,3 +88,16 @@ export const extractExternalProductData = async (page: puppeteer.Page, product: 
     link
   }
 }
+
+export const extractAccountsData = async (page: puppeteer.Page): Promise<Crawler.Account[]> => {
+  await page.goto(env.crawler.loginUrl);
+  await page.waitForSelector('[data-test="login-credentials-container"]')
+  const password = await page.$eval('[data-test="login-password"]', el => el.innerText.split('\n')[1]);
+  const accounts = await page.$eval('[data-test="login-credentials"]', el => {
+    const elArr = el.innerText.split('\n');
+    return elArr.slice(1, elArr.length - 1);
+  });
+  console.log(accounts);
+  const result: Crawler.Account[] = accounts.map(acc => ({ username: acc, password }));
+  return result
+}

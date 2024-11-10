@@ -38,12 +38,15 @@ export namespace Crawler {
 export interface ICrawler {
   execute: (accounts: Crawler.Params) => Promise<Crawler.Result>
   setIntances: (quantity: number) => Promise<void>
-  closeAllInstance(): Promise<void>
+  extractData: (account: Crawler.Account, context: BrowserContext) => Promise<Crawler.Product>
+  closeAllInstances(): Promise<void>
+  extractAccounts(): Promise<Crawler.Account[]>
 }
 
 export interface IBrowserContext {
   newInstance(): Promise<Crawler.Instance>
   getFreeInstance(): Promise<Crawler.Instance>
   setIntanceBusy(instanceId: string, busy: boolean): void
+  closeAllInstances(): Promise<void>
   closeInstance(instanceId: string): Promise<void>
 }
