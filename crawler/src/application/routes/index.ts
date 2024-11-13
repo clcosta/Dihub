@@ -7,8 +7,12 @@ import { LogAdapter } from '@/application/adapters/log-adapter';
 import { crawlerRouter } from './crawler-routes';
 
 class RoutesClass {
+
+  app: Express.Application;
+
   start = async () => {
     const app = Express();
+    this.app = app;
     app.use(cors())
     app.use(Express.json());
     app.use(Express.urlencoded({ extended: true }));

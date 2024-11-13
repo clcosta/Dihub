@@ -1,10 +1,10 @@
 import "../infra";
 import { LogAdapter } from "../application/adapters/log-adapter";
-import { Routes } from "@/application/routes";
+import { Routes as HttpServer } from "@/application/routes";
 
 const start = async () => {
   LogAdapter.getInstance().save({ message: "Start application!" });
-  await Routes.start();
+  await HttpServer.start();
 };
 
 start();
