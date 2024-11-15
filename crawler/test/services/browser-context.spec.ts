@@ -1,4 +1,4 @@
-import { describe, it, expect, afterEach, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { BrowserContext } from "../../src/application/services/crawler/browser-context";
 import { makeBrowserContext } from "../../src/application/factories/services/browser-context-factory";
 import { AppError } from "../../src/application/errors";
@@ -46,6 +46,16 @@ describe("Tests for BrowserContext Service", () => {
   beforeEach(() => {
     browserService = makeBrowserContext();
   });
+
+  afterEach(() => {
+    mockBrowserContext.getFreeInstance.mockClear();
+    mockBrowserContext.newInstance.mockClear();
+    mockBrowserContext.closeInstance.mockClear();
+    mockBrowserContext.closeAllInstances.mockClear();
+    mockBrowserContext.getInstancesMap.mockClear();
+    mockBrowserContext.setIntanceBusy.mockClear();
+    mockBrowserContext.instancesMap.clear();
+  })
 
   it("should create a new instance", async () => {
     mockBrowserContext.newInstance.mockResolvedValueOnce({
